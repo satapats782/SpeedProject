@@ -1,0 +1,29 @@
+{
+  "name": "speedscore-ahsun",
+  "version": "1.0.0",
+  "description": "This repository contains the code for SpeedScore, a single page web application that supports the sport of speedgolf by allowing users to \r   * log and analyze their speedgolf rounds\r   * share and discuss their speedgolf rounds with other speedgolfers\r   * add detailed golf, running, and topographical data on speedgolf-friendly to SpeedScore's course database",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "serve -s . -l 3000",
+    "test": "npm start & npx playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seal-osu/speedscore-ahsun.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/seal-osu/speedscore-ahsun/issues"
+  },
+  "homepage": "https://github.com/seal-osu/speedscore-ahsun#readme",
+  "dependencies": {
+    "playwright": "^1.42.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.42.0",
+    "serve": "^14.2.1"
+  }
+}
