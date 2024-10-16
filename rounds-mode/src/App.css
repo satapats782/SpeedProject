@@ -1,0 +1,59 @@
+/* Global app styles */
+.App {
+  text-align: center;
+}
+
+/* Navigation Bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0b3d91;
+  padding: 10px;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.navbar-logo span {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.navbar-links a.active {
+  border-bottom: 2px solid red;
+}
+
+.navbar-profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile-pic {
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* Main Content */
+.App-main {
+  padding: 20px;
+}
