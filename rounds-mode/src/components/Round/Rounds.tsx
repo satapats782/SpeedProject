@@ -1,36 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Round.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSort,
   faSortAmountDownAlt,
   faSortAmountDown,
-  faEye,
   faEdit,
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
+import { Modal, Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 import { Round } from '../Round';
 
 interface RoundsProps {
   roundsData: Round[];
   onAddRoundClick: () => void;
   onEditRoundClick: (round: Round) => void;
+  onDeleteRoundClick: (id: string) => void;
 }
 
 const Rounds: React.FC<RoundsProps> = ({
   roundsData,
   onAddRoundClick,
   onEditRoundClick,
+  onDeleteRoundClick,
 }) => {
-  const [sortedColumn, setSortedColumn] = useState<string>('');
+  const [sortedColumn, setSortedColumn] = useState<string>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [sortedData, setSortedData] = useState<Round[]>(roundsData);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [roundToDelete, setRoundToDelete] = useState<string | null>(null);
+
+  // Update sortedData when roundsData changes
+  useEffect(() => {
+    setSortedData(roundsData);
+  }, [roundsData]);
 
   // Handle sorting by a specific column
   const handleSort = (column: keyof Round) => {
     let newSortOrder: 'asc' | 'desc' = 'asc';
 
-    // If clicking the same column, toggle the order
+    // Toggle sorting order if the same column is clicked
     if (sortedColumn === column) {
       newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     }
@@ -44,16 +53,35 @@ const Rounds: React.FC<RoundsProps> = ({
     });
 
     setSortedData(sortedArray);
-    setSortedColumn(column);
+    setSortedColumn(column as string);
     setSortOrder(newSortOrder);
   };
 
-  // Function to get the appropriate sort icon
+  // Get the appropriate sort icon based on current sort state
   const getSortIcon = (column: keyof Round) => {
     if (sortedColumn === column) {
       return sortOrder === 'asc' ? faSortAmountDownAlt : faSortAmountDown;
     }
     return faSort;
+  };
+
+  // Open delete confirmation modal
+  const handleDeleteClick = (id: string) => {
+    setRoundToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  // Confirm deletion
+  const confirmDelete = () => {
+    if (roundToDelete) {
+      onDeleteRoundClick(roundToDelete); // Trigger the delete handler with round ID
+      setShowDeleteModal(false); // Close the modal after deletion
+    }
+  };
+
+  // Close the modal without deleting
+  const handleClose = () => {
+    setShowDeleteModal(false);
   };
 
   return (
@@ -86,21 +114,19 @@ const Rounds: React.FC<RoundsProps> = ({
                 <td>{round.course}</td>
                 <td>
                   {round.speedgolfScore} ({round.strokes} in{' '}
-                  {round.time.minutes}:{round.time.seconds
-                    .toString()
-                    .padStart(2, '0')})
+                  {round.time.minutes}:{round.time.seconds.toString().padStart(2, '0')})
                 </td>
-                <td>{round.distance.toFixed(2)} km</td> {/* Displaying distance */}
+                <td>{(round.distance / 5280).toFixed(2)} miles</td> {/* Convert feet to miles */}
                 <td>
-                  <button
-                    className="icon-btn"
-                    onClick={() => onEditRoundClick(round)}
-                  >
+                  <button className="icon-btn" onClick={() => onEditRoundClick(round)}>
                     <FontAwesomeIcon icon={faEdit} />
                   </button>
                 </td>
                 <td>
-                  <button className="icon-btn delete-btn">
+                  <button
+                    className="icon-btn delete-btn"
+                    onClick={() => handleDeleteClick(round.id)}
+                  >
                     <FontAwesomeIcon icon={faTrash} />
                   </button>
                 </td>
@@ -108,11 +134,28 @@ const Rounds: React.FC<RoundsProps> = ({
             ))
           ) : (
             <tr>
-              <td colSpan={6}>No rounds available</td> {/* Update colspan for 6 columns */}
+              <td colSpan={6}>No rounds available</td>
             </tr>
           )}
         </tbody>
       </table>
+
+      {/* Delete confirmation modal */}
+      <Modal show={showDeleteModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Round?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Do you really want to delete this round?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            No, Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmDelete}>
+            Yes, Delete Round
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <div className="new-round-btn-container">
         <button className="new-round-btn" onClick={onAddRoundClick}>
           <FontAwesomeIcon icon={faEdit} /> New Round
