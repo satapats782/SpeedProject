@@ -7,14 +7,16 @@ import {
   faSortAmountDown,
   faEdit,
   faTrash,
+  faEye,
 } from '@fortawesome/free-solid-svg-icons';
-import { Modal, Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 import { Round } from '../Round';
+import { Modal, Button } from 'react-bootstrap'; 
 
 interface RoundsProps {
   roundsData: Round[];
   onAddRoundClick: () => void;
   onEditRoundClick: (round: Round) => void;
+  onViewRoundClick: (round: Round) => void; 
   onDeleteRoundClick: (id: string) => void;
 }
 
@@ -22,6 +24,7 @@ const Rounds: React.FC<RoundsProps> = ({
   roundsData,
   onAddRoundClick,
   onEditRoundClick,
+  onViewRoundClick, 
   onDeleteRoundClick,
 }) => {
   const [sortedColumn, setSortedColumn] = useState<string>('date');
@@ -29,6 +32,7 @@ const Rounds: React.FC<RoundsProps> = ({
   const [sortedData, setSortedData] = useState<Round[]>(roundsData);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [roundToDelete, setRoundToDelete] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState(''); 
 
   // Update sortedData when roundsData changes
   useEffect(() => {
@@ -79,14 +83,34 @@ const Rounds: React.FC<RoundsProps> = ({
     }
   };
 
-  // Close the modal without deleting
-  const handleClose = () => {
-    setShowDeleteModal(false);
-  };
+  // Filter rounds based on search input
+  const filteredRounds = sortedData.filter((round) => {
+    const searchText = searchQuery.toLowerCase();
+    const dateMatch = round.date.toLowerCase().includes(searchText);
+    const courseMatch = round.course.toLowerCase().includes(searchText);
+    const scoreMatch = round.speedgolfScore.toString().includes(searchText);
+    const distanceMatch = (round.distance / 5280).toFixed(2).toString().includes(searchText);
+
+    return dateMatch || courseMatch || scoreMatch || distanceMatch;
+  });
 
   return (
     <div className="rounds-container">
       <h2>Rounds</h2>
+
+      {/* Search/Filter Input */}
+      <div className="search-container">
+        <label htmlFor="search">Search/Filter:</label>
+        <input
+          type="text"
+          id="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Type to search..."
+        />
+      </div>
+
+      {/* Rounds Table */}
       <table className="rounds-table">
         <thead>
           <tr>
@@ -107,8 +131,8 @@ const Rounds: React.FC<RoundsProps> = ({
           </tr>
         </thead>
         <tbody>
-          {sortedData.length > 0 ? (
-            sortedData.map((round, index) => (
+          {filteredRounds.length > 0 ? (
+            filteredRounds.map((round, index) => (
               <tr key={index}>
                 <td>{round.date}</td>
                 <td>{round.course}</td>
@@ -118,8 +142,17 @@ const Rounds: React.FC<RoundsProps> = ({
                 </td>
                 <td>{(round.distance / 5280).toFixed(2)} miles</td> {/* Convert feet to miles */}
                 <td>
-                  <button className="icon-btn" onClick={() => onEditRoundClick(round)}>
-                    <FontAwesomeIcon icon={faEdit} />
+                  <button
+                    className="icon-btn"
+                    onClick={() => onViewRoundClick(round)} // View button handler
+                  >
+                    <FontAwesomeIcon icon={faEye} /> {/* View icon */}
+                  </button>
+                  <button
+                    className="icon-btn"
+                    onClick={() => onEditRoundClick(round)}
+                  >
+                    <FontAwesomeIcon icon={faEdit} /> {/* Edit icon */}
                   </button>
                 </td>
                 <td>
@@ -140,14 +173,19 @@ const Rounds: React.FC<RoundsProps> = ({
         </tbody>
       </table>
 
+      {/* Table Caption */}
+      <p>Table displaying {filteredRounds.length} speedgolf rounds</p>
+
       {/* Delete confirmation modal */}
-      <Modal show={showDeleteModal} onHide={handleClose}>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Delete Round?</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Do you really want to delete this round?</Modal.Body>
+        <Modal.Body>
+          Do you really want to delete this round?
+        </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
             No, Cancel
           </Button>
           <Button variant="danger" onClick={confirmDelete}>

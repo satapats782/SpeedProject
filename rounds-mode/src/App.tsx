@@ -5,13 +5,14 @@ import EditRound from './components/EditRound/EditRound';
 import { Round } from './components/Round';
 import Rounds from './components/Round/Rounds';
 import { useRoundContext } from './context/RoundContext';
+import { Modal, Button } from 'react-bootstrap';
 
 const App: React.FC = () => {
   const [showAddRoundForm, setShowAddRoundForm] = useState(false);
   const [showEditRoundForm, setShowEditRoundForm] = useState(false);
   const [selectedRound, setSelectedRound] = useState<Round | null>(null);
+  const [showViewRoundModal, setShowViewRoundModal] = useState(false);
 
-  // Access rounds and action creators from the context
   const { state, addRound, editRound, deleteRound } = useRoundContext();
 
   // Show Add Round form
@@ -49,12 +50,22 @@ const App: React.FC = () => {
     setShowEditRoundForm(false);
   };
 
-  const handleDeleteRoundClick = (id: string) => {
-    console.log('Before delete:', state.rounds); // Check rounds before deletion
-    deleteRound(id);
-    console.log('After delete:', state.rounds); // This might not immediately reflect due to async state update
+  // View Round handler
+  const handleViewRoundClick = (round: Round) => {
+    setSelectedRound(round);
+    setShowViewRoundModal(true); // Open the modal when view button is clicked
   };
-  
+
+  // Close the view modal
+  const handleCloseViewRoundModal = () => {
+    setShowViewRoundModal(false);
+  };
+
+  const handleDeleteRoundClick = (id: string) => {
+    console.log('Before delete:', state.rounds);
+    deleteRound(id);
+    console.log('After delete:', state.rounds);
+  };
 
   return (
     <div className="App">
@@ -87,9 +98,35 @@ const App: React.FC = () => {
             roundsData={state.rounds}
             onAddRoundClick={handleShowAddRound}
             onEditRoundClick={handleEditRoundClick}
-            onDeleteRoundClick={handleDeleteRoundClick} // Pass delete handler
+            onViewRoundClick={handleViewRoundClick} // Pass view handler
+            onDeleteRoundClick={handleDeleteRoundClick}
           />
         )}
+
+        {/* View Round Modal */}
+        <Modal show={showViewRoundModal} onHide={handleCloseViewRoundModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>View Round Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {selectedRound && (
+              <>
+                <p><strong>Date:</strong> {selectedRound.date}</p>
+                <p><strong>Course:</strong> {selectedRound.course}</p>
+                <p><strong>Score:</strong> {selectedRound.speedgolfScore}</p>
+                <p><strong>Strokes:</strong> {selectedRound.strokes}</p>
+                <p><strong>Time:</strong> {selectedRound.time.minutes} min {selectedRound.time.seconds} sec</p>
+                <p><strong>Distance:</strong> {(selectedRound.distance / 5280).toFixed(2)} miles</p>
+                <p><strong>Notes:</strong> {selectedRound.notes}</p>
+              </>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseViewRoundModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </main>
     </div>
   );
