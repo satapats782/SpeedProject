@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './AddRound.css'; // Add any custom styling for the AddRound form
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import { Round } from '../Round';
-
 
 interface AddRoundProps {
   onAddRound: (newRound: Round) => void; // Function to handle adding a new round
@@ -18,12 +18,45 @@ const AddRound: React.FC<AddRoundProps> = ({ onAddRound, onCancel }) => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [notes, setNotes] = useState('');
+  const [distance, setDistance] = useState(''); // New Distance Field
+  const [isMiles, setIsMiles] = useState(true); // Default to Miles
 
   const speedgolfScore = strokes + minutes; // Calculate speedgolf score
+  const [errorMessage, setErrorMessage] = useState(''); // Error message state
+
+  // Function to handle the unit toggle between miles and kilometers
+  const handleUnitToggle = () => {
+    if (distance) {
+      const distanceValue = parseFloat(distance);
+      if (isMiles) {
+        setDistance((distanceValue * 1.60934).toFixed(2)); // Convert miles to km
+      } else {
+        setDistance((distanceValue / 1.60934).toFixed(2)); // Convert km to miles
+      }
+    }
+    setIsMiles(!isMiles); // Toggle the unit state
+  };
 
   // Handle form submission for adding a new round
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const distanceValue = parseFloat(distance);
+    // Validate distance range (Miles: 0.01 - 62.00, Kilometers: 0.10 - 100.00)
+    if (
+      (!isMiles && (distanceValue < 0.10 || distanceValue > 100.0)) ||
+      (isMiles && (distanceValue < 0.01 || distanceValue > 62.0))
+    ) {
+      setErrorMessage(
+        `Distance must be between ${
+          isMiles ? '0.01 and 62.00 miles' : '0.10 and 100.00 kilometers'
+        }.`
+      );
+      return;
+    }
+
+    // Convert distance to feet before saving
+    const distanceInFeet = isMiles ? distanceValue * 5280 : distanceValue * 3280.84;
 
     // Create a new unique id for each new round
     const newRound: Round = {
@@ -35,6 +68,7 @@ const AddRound: React.FC<AddRoundProps> = ({ onAddRound, onCancel }) => {
       strokes,
       time: { minutes, seconds },
       speedgolfScore,
+      distance: distanceInFeet, // Save distance in feet
       notes,
     };
 
@@ -45,6 +79,11 @@ const AddRound: React.FC<AddRoundProps> = ({ onAddRound, onCancel }) => {
   return (
     <div className="add-round-container">
       <h2>Add New Round</h2>
+      {errorMessage && (
+        <div className="alert alert-danger" role="alert" tabIndex={-1}>
+          {errorMessage}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="add-round-form">
         <label>Date:</label>
         <input
@@ -112,6 +151,29 @@ const AddRound: React.FC<AddRoundProps> = ({ onAddRound, onCancel }) => {
 
         <label>Speedgolf Score:</label>
         <input type="text" value={speedgolfScore} readOnly />
+
+        <label>Distance:</label>
+        <input
+          type="number"
+          step="0.01"
+          value={distance}
+          onChange={(e) => setDistance(e.target.value)}
+          min={isMiles ? 0.01 : 0.1}
+          max={isMiles ? 62.0 : 100.0}
+          placeholder={`Enter distance in ${isMiles ? 'miles' : 'kilometers'}`}
+        />
+
+        <div className="form-switch">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={isMiles}
+            onChange={handleUnitToggle}
+          />
+          <label className="form-check-label">
+            {isMiles ? 'Miles' : 'Kilometers'}
+          </label>
+        </div>
 
         <label>Notes:</label>
         <textarea

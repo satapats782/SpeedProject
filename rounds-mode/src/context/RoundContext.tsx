@@ -37,6 +37,7 @@ const initialState: RoundState = {
       time: { minutes: 55, seconds: 0 },
       speedgolfScore: 131,
       notes: '',
+      distance: 15840, // Distance in feet (3 miles)
     },
     {
       id: '2',
@@ -48,6 +49,7 @@ const initialState: RoundState = {
       time: { minutes: 60, seconds: 0 },
       speedgolfScore: 140,
       notes: '',
+      distance: 21120, // Distance in feet (4 miles)
     },
   ],
 };

@@ -1,5 +1,5 @@
 export interface Round {
-  id: string;
+  id: string; // Unique identifier for each round
   date: string;
   course: string;
   type: string;
@@ -11,4 +11,5 @@ export interface Round {
   };
   speedgolfScore: number;
   notes: string;
+  distance: number; // New distance field to store distance in feet
 }

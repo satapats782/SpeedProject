@@ -68,22 +68,21 @@ const App: React.FC = () => {
       </header>
 
       <main className="App-main">
-      {showAddRoundForm ? (
-  <AddRound onAddRound={handleAddRound} onCancel={handleCancelAddRound} />
-) : showEditRoundForm && selectedRound ? (
-  <EditRound
-    round={selectedRound}
-    onUpdateRound={handleUpdateRound}
-    onCancel={handleCancelEditRound}
-  />
-) : (
-  <Rounds
-    roundsData={state.rounds}
-    onAddRoundClick={handleShowAddRound}
-    onEditRoundClick={handleEditRoundClick}
-  />
-)}
-
+        {showAddRoundForm ? (
+          <AddRound onAddRound={handleAddRound} onCancel={handleCancelAddRound} />
+        ) : showEditRoundForm && selectedRound ? (
+          <EditRound
+            round={selectedRound}
+            onUpdateRound={handleUpdateRound}
+            onCancel={handleCancelEditRound}
+          />
+        ) : (
+          <Rounds
+            roundsData={state.rounds}
+            onAddRoundClick={handleShowAddRound}
+            onEditRoundClick={handleEditRoundClick}
+          />
+        )}
       </main>
     </div>
   );
