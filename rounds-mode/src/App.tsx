@@ -6,19 +6,18 @@ import { Round } from './components/Round';
 import Rounds from './components/Round/Rounds';
 import { useRoundContext } from './context/RoundContext';
 
-
 const App: React.FC = () => {
   const [showAddRoundForm, setShowAddRoundForm] = useState(false);
   const [showEditRoundForm, setShowEditRoundForm] = useState(false);
   const [selectedRound, setSelectedRound] = useState<Round | null>(null);
 
   // Access rounds and action creators from the context
-  const { state, addRound, editRound } = useRoundContext();
+  const { state, addRound, editRound, deleteRound } = useRoundContext();
 
   // Show Add Round form
   const handleShowAddRound = () => {
     setShowAddRoundForm(true);
-    setShowEditRoundForm(false); // Hide edit form
+    setShowEditRoundForm(false);
   };
 
   // Add a new round
@@ -34,21 +33,28 @@ const App: React.FC = () => {
 
   // Show Edit Round form
   const handleEditRoundClick = (round: Round) => {
-    setSelectedRound(round); // Set selected round for editing
+    setSelectedRound(round);
     setShowEditRoundForm(true);
-    setShowAddRoundForm(false); // Hide add form
+    setShowAddRoundForm(false);
   };
 
   // Update an existing round
   const handleUpdateRound = (updatedRound: Round) => {
-    editRound(updatedRound); // Update the round in the context
-    setShowEditRoundForm(false); // Hide edit form
+    editRound(updatedRound);
+    setShowEditRoundForm(false);
   };
 
   // Cancel editing a round
   const handleCancelEditRound = () => {
     setShowEditRoundForm(false);
   };
+
+  const handleDeleteRoundClick = (id: string) => {
+    console.log('Before delete:', state.rounds); // Check rounds before deletion
+    deleteRound(id);
+    console.log('After delete:', state.rounds); // This might not immediately reflect due to async state update
+  };
+  
 
   return (
     <div className="App">
@@ -81,6 +87,7 @@ const App: React.FC = () => {
             roundsData={state.rounds}
             onAddRoundClick={handleShowAddRound}
             onEditRoundClick={handleEditRoundClick}
+            onDeleteRoundClick={handleDeleteRoundClick} // Pass delete handler
           />
         )}
       </main>
