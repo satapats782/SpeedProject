@@ -51,6 +51,18 @@ const initialState: RoundState = {
       notes: '',
       distance: 21120, // Distance in feet (4 miles)
     },
+    {
+      id: '5',
+      date: '2022-10-08',
+      course: 'cvbnjkkl',
+      type: 'Practice',
+      holes: 20,
+      strokes: 80,
+      time: { minutes: 60, seconds: 0 },
+      speedgolfScore: 140,
+      notes: '',
+      distance: 21120, // Distance in feet (4 miles)
+    },
   ],
 };
 
