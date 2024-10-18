@@ -1,17 +1,14 @@
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
 import { Round } from '../components/Round';
 
-// Define action types
 const ADD_ROUND = 'ADD_ROUND';
 const EDIT_ROUND = 'EDIT_ROUND';
 const DELETE_ROUND = 'DELETE_ROUND'; // Action type for deleting a round
 
-// Define the state shape
 interface RoundState {
   rounds: Round[];
 }
 
-// Define action shapes
 interface AddRoundAction {
   type: typeof ADD_ROUND;
   payload: Round;
@@ -24,12 +21,11 @@ interface EditRoundAction {
 
 interface DeleteRoundAction {
   type: typeof DELETE_ROUND;
-  payload: string; // The ID of the round to delete
+  payload: string; 
 }
 
 type RoundAction = AddRoundAction | EditRoundAction | DeleteRoundAction;
 
-// Initial state with example rounds
 const initialState: RoundState = {
   rounds: [
     {
@@ -59,7 +55,6 @@ const initialState: RoundState = {
   ],
 };
 
-// Reducer to handle actions
 const roundReducer = (state: RoundState, action: RoundAction): RoundState => {
   switch (action.type) {
     case ADD_ROUND:
@@ -81,17 +76,17 @@ const roundReducer = (state: RoundState, action: RoundAction): RoundState => {
       return state;
   }
 };
-// Create the context
+
 const RoundContext = createContext<{
   state: RoundState;
   addRound: (round: Round) => void;
   editRound: (round: Round) => void;
-  deleteRound: (id: string) => void; // Include delete action
+  deleteRound: (id: string) => void; 
 }>({
   state: initialState,
   addRound: () => {},
   editRound: () => {},
-  deleteRound: () => {}, // Empty delete action
+  deleteRound: () => {}, 
 });
 
 // Custom hook for accessing the context
