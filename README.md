@@ -12,7 +12,7 @@ To run SpeedScore from Visual Studio Code, type
 `npm run start`
 in the terminal.
 
-# Reflection
+# Reflection for AboutBox functionality
 
 Approach:
 
@@ -23,6 +23,8 @@ After setting up the global variables to reference the modal and its buttons in 
 Testing and Validation:
 
 I wrote a Playwright test suite to validate the functionality of the "About" box. The tests covered the display of the modal when the "About" menu item is clicked, as well as closing the modal when the "x" button or the "OK" button is pressed. Running these tests using npm run test confirmed that the functionality worked as expected and helped me catch any potential edge cases.
+
+# Reflection for Delete functionality
 
 1. State-Driven UI Management:
    
@@ -47,35 +49,32 @@ The delete functionality is built to be extendable, allowing for future scalabil
 The current implementation focuses on local data, but the modular design allows for easy integration with a server-side API. For example, the onDeleteRoundClick handler could be updated to send a DELETE request to a backend service before updating local state.
 
  
-# Reflection
-
+# Reflection for AddDistance functionality
 
 1. State Management Using React Context and Reducers :
    
 The React Context API, combined with a reducer pattern, was used for global state management. This allowed the application to centralize the logic for handling rounds, including adding, editing, and managing the new "distance" attribute.
 The reducer pattern enabled a clean separation of state logic and user actions. By handling all state mutations through defined actions (ADD_ROUND, EDIT_ROUND), the app achieved predictability and maintainability. This also ensured that the new distance field was seamlessly integrated into the existing rounds state without introducing any side effects.
-3. Distance Input and Data Validation :
 
-One key challenge was handling user input for the distance field, ensuring flexibility in units (miles and kilometers) while maintaining data consistency. This was solved by converting all distance values to a standard unit (feet) before persisting them, ensuring uniformity across the app.
+3. Distance Input and Data Validation :
 User input validation was performed to guarantee that distance values entered by users fell within a reasonable range. The validation rules differed for miles and kilometers, ensuring that users entered valid values regardless of their preferred unit. This approach improved data quality and prevented invalid data from being stored.
 
 4. Component Reusability and Modularity :
    
 The feature was designed with a modular component structure, keeping individual components focused on a single responsibility. The AddRound component handled all logic related to input and form submission, while the Rounds component was responsible for displaying, searching, and managing rounds.
-This modular design allowed for better separation of concerns and made each component easier to test, extend, and maintain. It also facilitated future improvements, such as adding new features or expanding existing ones. 
 
 6. Local Storage for Persistence :
    
 To enhance the user experience, local storage was leveraged to persist round data, including the distance field, across browser sessions. By storing rounds in local storage, the application maintained data consistency even after page refreshes or browser restarts.
 
 
-# Reflection
+# Reflection for speedscore-react 
 
 The migration of SpeedScore from a vanilla JavaScript-based implementation to React.js involved a fundamental redesign of how the application manages and interacts with data, UI, and state. This transition significantly improved the application's scalability, maintainability, and overall structure.
 
 Component-Based Architecture:
 
-One of the key changes in moving to React.js was the shift towards a component-based architecture. In the React version, the application was divided into smaller, reusable components such as AddRound, EditRound, and RoundsTable. Each of these components handles a specific aspect of the app, allowing for better modularity and isolation of features. This modularity makes the code easier to maintain and scale as each component can be independently developed and tested.
+ In the React version, the application was divided into smaller, reusable components such as AddRound, EditRound, and RoundsTable. Each of these components handles a specific aspect of the app, allowing for better modularity and isolation of features. This modularity makes the code easier to maintain and scale as each component can be independently developed and tested.
 
 State Management with Hooks:
 
@@ -96,7 +95,7 @@ API Integration and Backend Communication:
 The React version also extends functionality by connecting to a backend API for more robust data handling. Components like AddRound and EditRound now communicate with a backend using fetch for actions like adding and updating rounds. This integration prepares the app for more advanced use cases such as user authentication and database persistence, moving away from solely front-end data management.
 
 
-# Reflection
+# Reflection for rounds search
 
 Technical Approach: 
 Client-Side Filtering:
