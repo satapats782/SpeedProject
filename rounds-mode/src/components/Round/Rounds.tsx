@@ -10,40 +10,39 @@ import {
   faEye,
 } from '@fortawesome/free-solid-svg-icons';
 import { Round } from '../Round';
-import { Modal, Button } from 'react-bootstrap'; 
+import { Modal, Button } from 'react-bootstrap';
 
 interface RoundsProps {
   roundsData: Round[];
   onAddRoundClick: () => void;
   onEditRoundClick: (round: Round) => void;
-  onViewRoundClick: (round: Round) => void; 
+  onViewRoundClick: (round: Round) => void;
   onDeleteRoundClick: (id: string) => void;
 }
 
 const Rounds: React.FC<RoundsProps> = ({
-  roundsData,
   onAddRoundClick,
   onEditRoundClick,
-  onViewRoundClick, 
+  onViewRoundClick,
   onDeleteRoundClick,
 }) => {
   const [sortedColumn, setSortedColumn] = useState<string>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [sortedData, setSortedData] = useState<Round[]>(roundsData);
+  const [sortedData, setSortedData] = useState<Round[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [roundToDelete, setRoundToDelete] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState(''); 
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Update sortedData when roundsData changes
+  // Load data from localStorage on component mount
   useEffect(() => {
-    setSortedData(roundsData);
-  }, [roundsData]);
+    const storedRounds = JSON.parse(localStorage.getItem('rounds') || '[]');
+    setSortedData(storedRounds);
+  }, []);
 
   // Handle sorting by a specific column
   const handleSort = (column: keyof Round) => {
     let newSortOrder: 'asc' | 'desc' = 'asc';
 
-    // Toggle sorting order if the same column is clicked
     if (sortedColumn === column) {
       newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     }
@@ -78,18 +77,22 @@ const Rounds: React.FC<RoundsProps> = ({
   // Confirm deletion
   const confirmDelete = () => {
     if (roundToDelete) {
-      onDeleteRoundClick(roundToDelete); // Trigger the delete handler with round ID
-      setShowDeleteModal(false); // Close the modal after deletion
+      const updatedRounds = sortedData.filter((round) => round.id !== roundToDelete);
+      setSortedData(updatedRounds);
+      localStorage.setItem('rounds', JSON.stringify(updatedRounds)); 
+      onDeleteRoundClick(roundToDelete); 
+      setShowDeleteModal(false); 
     }
   };
 
   // Filter rounds based on search input
   const filteredRounds = sortedData.filter((round) => {
     const searchText = searchQuery.toLowerCase();
-    const dateMatch = round.date.toLowerCase().includes(searchText);
-    const courseMatch = round.course.toLowerCase().includes(searchText);
+    const dateMatch = round.date?.toLowerCase().includes(searchText);
+    const courseMatch = round.course?.toLowerCase().includes(searchText);
     const scoreMatch = round.speedgolfScore.toString().includes(searchText);
-    const distanceMatch = (round.distance / 5280).toFixed(2).toString().includes(searchText);
+    const distanceInMiles = (round.distance / 5280).toFixed(2).toString();
+    const distanceMatch = distanceInMiles.includes(searchText);
 
     return dateMatch || courseMatch || scoreMatch || distanceMatch;
   });
@@ -110,7 +113,6 @@ const Rounds: React.FC<RoundsProps> = ({
         />
       </div>
 
-      {/* Rounds Table */}
       <table className="rounds-table">
         <thead>
           <tr>
@@ -140,19 +142,19 @@ const Rounds: React.FC<RoundsProps> = ({
                   {round.speedgolfScore} ({round.strokes} in{' '}
                   {round.time.minutes}:{round.time.seconds.toString().padStart(2, '0')})
                 </td>
-                <td>{(round.distance / 5280).toFixed(2)} miles</td> {/* Convert feet to miles */}
+                <td>{(round.distance / 5280).toFixed(2)} miles</td>
                 <td>
                   <button
                     className="icon-btn"
-                    onClick={() => onViewRoundClick(round)} // View button handler
+                    onClick={() => onViewRoundClick(round)} 
                   >
-                    <FontAwesomeIcon icon={faEye} /> {/* View icon */}
+                    <FontAwesomeIcon icon={faEye} /> 
                   </button>
                   <button
                     className="icon-btn"
                     onClick={() => onEditRoundClick(round)}
                   >
-                    <FontAwesomeIcon icon={faEdit} /> {/* Edit icon */}
+                    <FontAwesomeIcon icon={faEdit} /> 
                   </button>
                 </td>
                 <td>
@@ -173,10 +175,8 @@ const Rounds: React.FC<RoundsProps> = ({
         </tbody>
       </table>
 
-      {/* Table Caption */}
       <p>Table displaying {filteredRounds.length} speedgolf rounds</p>
 
-      {/* Delete confirmation modal */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Delete Round?</Modal.Title>

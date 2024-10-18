@@ -1,48 +1,49 @@
 import React, { useState } from 'react';
-import './AddRound.css'; // Add any custom styling for the AddRound form
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import './AddRound.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Round } from '../Round';
 
 interface AddRoundProps {
-  onAddRound: (newRound: Round) => void; // Function to handle adding a new round
-  onCancel: () => void; // Function to handle cancel action
+  onAddRound: (newRound: Round) => void; 
+  onCancel: () => void; 
 }
 
 const AddRound: React.FC<AddRoundProps> = ({ onAddRound, onCancel }) => {
-  // Initialize form states for new round fields
   const [date, setDate] = useState('');
   const [course, setCourse] = useState('');
-  const [type, setType] = useState('Practice'); // Default to Practice
-  const [holes, setHoles] = useState(18); // Default to 18 holes
+  const [type, setType] = useState('Practice'); 
+  const [holes, setHoles] = useState(18);
   const [strokes, setStrokes] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [notes, setNotes] = useState('');
-  const [distance, setDistance] = useState(''); // New Distance Field
-  const [isMiles, setIsMiles] = useState(true); // Default to Miles
+  const [distance, setDistance] = useState('');
+  const [isMiles, setIsMiles] = useState(true); // Unit of measurement: Miles or Kilometers
 
-  const speedgolfScore = strokes + minutes; // Calculate speedgolf score
   const [errorMessage, setErrorMessage] = useState(''); // Error message state
 
-  // Function to handle the unit toggle between miles and kilometers
+  // Calculate speedgolf score
+  const speedgolfScore = strokes + minutes;
+
+  // Toggle between miles and kilometers
   const handleUnitToggle = () => {
     if (distance) {
       const distanceValue = parseFloat(distance);
       if (isMiles) {
-        setDistance((distanceValue * 1.60934).toFixed(2)); // Convert miles to km
+        setDistance((distanceValue * 1.60934).toFixed(2)); // Convert miles to kilometers
       } else {
-        setDistance((distanceValue / 1.60934).toFixed(2)); // Convert km to miles
+        setDistance((distanceValue / 1.60934).toFixed(2)); // Convert kilometers to miles
       }
     }
-    setIsMiles(!isMiles); // Toggle the unit state
+    setIsMiles(!isMiles); // Toggle between units
   };
 
   // Handle form submission for adding a new round
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const distanceValue = parseFloat(distance);
-    // Validate distance range (Miles: 0.01 - 62.00, Kilometers: 0.10 - 100.00)
+    // Validate distance range
     if (
       (!isMiles && (distanceValue < 0.10 || distanceValue > 100.0)) ||
       (isMiles && (distanceValue < 0.01 || distanceValue > 62.0))
@@ -58,7 +59,7 @@ const AddRound: React.FC<AddRoundProps> = ({ onAddRound, onCancel }) => {
     // Convert distance to feet before saving
     const distanceInFeet = isMiles ? distanceValue * 5280 : distanceValue * 3280.84;
 
-    // Create a new unique id for each new round
+    // Create a new unique id for the new round
     const newRound: Round = {
       id: Math.random().toString(36).substr(2, 9), // Generate a unique id
       date,
@@ -72,8 +73,34 @@ const AddRound: React.FC<AddRoundProps> = ({ onAddRound, onCancel }) => {
       notes,
     };
 
-    // Call the onAddRound function passed via props to add the new round
+    // Save the new round to localStorage
+    const storedRounds = JSON.parse(localStorage.getItem('rounds') || '[]');
+    const updatedRounds = [...storedRounds, newRound];
+    localStorage.setItem('rounds', JSON.stringify(updatedRounds));
+
+    // Call the onAddRound function to add the round to the local state
     onAddRound(newRound);
+
+    try {
+      // Send data to the backend via POST request
+      const response = await fetch('http://localhost:5000/api/rounds/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Use token for authentication
+        },
+        body: JSON.stringify(newRound),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert('Round added successfully');
+      } else {
+        setErrorMessage(data.error || 'Something went wrong.');
+      }
+    } catch (error) {
+      setErrorMessage('Failed to connect to the server.');
+    }
   };
 
   return (
