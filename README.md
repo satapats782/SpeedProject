@@ -14,6 +14,32 @@ in the terminal.
 
 # Reflection
 
+1. State-Driven UI Management:
+   
+The core of the delete functionality is managed through React state, ensuring that the UI remains responsive and efficient. The modal confirmation dialog is triggered by setting a piece of state (showDeleteModal) and specifying the round to be deleted through another piece of state (roundToDelete).
+
+2. Delete Confirmation Modal for User Safety :
+   
+The delete process requires user confirmation through a Bootstrap modal. This approach offers a clean, accessible, and responsive UI for the user to confirm whether they want to proceed with the deletion.
+The modal's close/cancel button and confirmation button are tied to the state management system, ensuring that the UI updates accordingly based on user interaction.
+
+3. Data Persistence :
+One of the key aspects of the delete functionality is the synchronization between the local application state and localStorage. When a round is deleted:
+It is first filtered out of the current dataset stored in the component’s state (sortedData).
+Next, the new list of rounds is persisted to localStorage, ensuring that the deleted round is no longer visible after page refreshes or when the user revisits the app.
+
+4. Handling Deletions Efficiently:
+The deletion is processed locally by filtering the sortedData state array. This ensures that the component re-renders immediately after a round is deleted, providing a real-time update to the user without reloading the entire page.
+Updating localStorage is done in the same step to ensure data persistence, which is crucial for retaining consistency across user sessions.
+
+6. Modularity and Scalability
+The delete functionality is built to be extendable, allowing for future scalability:
+The current implementation focuses on local data, but the modular design allows for easy integration with a server-side API. For example, the onDeleteRoundClick handler could be updated to send a DELETE request to a backend service before updating local state.
+
+ 
+# Reflection
+
+
 1. State Management Using React Context and Reducers :
    
 The React Context API, combined with a reducer pattern, was used for global state management. This allowed the application to centralize the logic for handling rounds, including adding, editing, and managing the new "distance" attribute.
@@ -78,5 +104,6 @@ Solution: I implemented this by combining multiple conditions in the .filter() m
 
 
 In addition to filtering the data, I added functionality to update the table caption to reflect the number of rounds displayed after filtering. This provides immediate feedback to the user on how many rounds match their search criteria.
+
 
 
