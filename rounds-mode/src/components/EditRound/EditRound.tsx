@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import '../AddRound/AddRound.css'; // Reuse AddRound CSS for styling
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import '../AddRound/AddRound.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Round } from '../Round';
 
 interface EditRoundProps {
@@ -96,22 +96,21 @@ const EditRound: React.FC<EditRoundProps> = ({ round, onUpdateRound, onCancel })
     <div className="add-round-container">
       <h2>Edit Round</h2>
 
-      {/* Error message section */}
       {errorMessage && (
         <div
           className="alert alert-danger"
           role="alert"
-          tabIndex={-1} // Make it focusable
-          ref={errorMessageRef} // Set ref to focus on this
+          tabIndex={-1} 
+          ref={errorMessageRef}
           style={{
-            backgroundColor: '#f8d7da', // Light red background
-            color: '#842029', // Dark red text
+            backgroundColor: '#f8d7da',
+            color: '#842029',
             padding: '10px',
             margin: '10px 0',
-            border: '1px solid #f5c2c7', // Border for error box
+            border: '1px solid #f5c2c7', 
             borderRadius: '5px',
           }}
-          onClick={() => distanceInputRef.current?.focus()} // Focus the distance input on click
+          onClick={() => distanceInputRef.current?.focus()} 
         >
           {errorMessage}
         </div>

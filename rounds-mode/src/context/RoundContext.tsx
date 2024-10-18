@@ -1,17 +1,14 @@
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
 import { Round } from '../components/Round';
 
-
-// Define action types
 const ADD_ROUND = 'ADD_ROUND';
 const EDIT_ROUND = 'EDIT_ROUND';
+const DELETE_ROUND = 'DELETE_ROUND'; // Action type for deleting a round
 
-// Define the state shape
 interface RoundState {
   rounds: Round[];
 }
 
-// Define action shapes
 interface AddRoundAction {
   type: typeof ADD_ROUND;
   payload: Round;
@@ -22,9 +19,13 @@ interface EditRoundAction {
   payload: Round;
 }
 
-type RoundAction = AddRoundAction | EditRoundAction;
+interface DeleteRoundAction {
+  type: typeof DELETE_ROUND;
+  payload: string; 
+}
 
-// Initial state with example rounds (you can start with an empty array)
+type RoundAction = AddRoundAction | EditRoundAction | DeleteRoundAction;
+
 const initialState: RoundState = {
   rounds: [
     {
@@ -37,7 +38,7 @@ const initialState: RoundState = {
       time: { minutes: 55, seconds: 0 },
       speedgolfScore: 131,
       notes: '',
-      distance: 15840, // Distance in feet (3 miles)
+      distance: 15840,
     },
     {
       id: '2',
@@ -49,24 +50,11 @@ const initialState: RoundState = {
       time: { minutes: 60, seconds: 0 },
       speedgolfScore: 140,
       notes: '',
-      distance: 21120, // Distance in feet (4 miles)
-    },
-    {
-      id: '5',
-      date: '2022-10-08',
-      course: 'cvbnjkkl',
-      type: 'Practice',
-      holes: 20,
-      strokes: 80,
-      time: { minutes: 60, seconds: 0 },
-      speedgolfScore: 140,
-      notes: '',
-      distance: 21120, // Distance in feet (4 miles)
+      distance: 21120,
     },
   ],
 };
 
-// Reducer to handle actions
 const roundReducer = (state: RoundState, action: RoundAction): RoundState => {
   switch (action.type) {
     case ADD_ROUND:
@@ -78,20 +66,27 @@ const roundReducer = (state: RoundState, action: RoundAction): RoundState => {
           round.id === action.payload.id ? action.payload : round
         ),
       };
+    case DELETE_ROUND:
+      console.log("Deleting round with ID:", action.payload); // Logging to confirm action
+      return {
+        ...state,
+        rounds: state.rounds.filter((round) => round.id !== action.payload), // Immutably filter out the round by ID
+      };
     default:
       return state;
   }
 };
 
-// Create the context
 const RoundContext = createContext<{
   state: RoundState;
   addRound: (round: Round) => void;
   editRound: (round: Round) => void;
+  deleteRound: (id: string) => void; 
 }>({
   state: initialState,
   addRound: () => {},
   editRound: () => {},
+  deleteRound: () => {}, 
 });
 
 // Custom hook for accessing the context
@@ -110,8 +105,12 @@ export const RoundProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     dispatch({ type: EDIT_ROUND, payload: round });
   };
 
+  const deleteRound = (id: string) => {
+    dispatch({ type: DELETE_ROUND, payload: id }); // Dispatch the delete action with round ID
+  };
+
   return (
-    <RoundContext.Provider value={{ state, addRound, editRound }}>
+    <RoundContext.Provider value={{ state, addRound, editRound, deleteRound }}>
       {children}
     </RoundContext.Provider>
   );

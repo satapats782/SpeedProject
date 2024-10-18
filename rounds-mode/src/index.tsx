@@ -2,16 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import { RoundProvider } from './context/RoundContext'; // Import your context provider
 import reportWebVitals from './reportWebVitals';
-import { RoundProvider } from './context/RoundContext';
- 
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <RoundProvider> {/* Wrap App with RoundProvider */}
+    {/* Wrap the App component with the RoundProvider */}
+    <RoundProvider>
       <App />
     </RoundProvider>
   </React.StrictMode>
