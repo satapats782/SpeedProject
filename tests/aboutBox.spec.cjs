@@ -8,7 +8,7 @@ test.describe('About Box Functionality', () => {
     await page.goto('http://localhost:3000'); // Adjust URL based on your setup
 
     // Click on the "About" menu item
-    await page.click('text=About'); // Adjust the selector for your "About" link if necessary
+    await page.click('text=About'); 
 
     // Wait for the modal to be fully visible (Bootstrap modal may have fade-in animations)
     const aboutBox = await page.waitForSelector('#aboutSpeedScore', { state: 'visible' });
@@ -25,7 +25,7 @@ test.describe('About Box Functionality', () => {
     const aboutBox = await page.waitForSelector('#aboutSpeedScore', { state: 'visible' });
 
     // Select the specific "x" close button in the modal header and click it
-    await page.click('#aboutSpeedScore .modal-header .close-about-btn'); // More specific selector for "x" button
+    await page.click('#aboutSpeedScore .modal-header .close-about-btn'); 
 
     // Ensure the modal is hidden
     await expect(aboutBox).toBeHidden(); // Verify that the About Box is hidden
@@ -39,12 +39,10 @@ test.describe('About Box Functionality', () => {
 
     // Wait for the modal to become visible
     const aboutBox = await page.waitForSelector('#aboutSpeedScore', { state: 'visible' });
-
-    // Click the specific "OK" button in the modal footer
-    await page.click('#aboutSpeedScore .modal-footer .btn-theme'); // More specific selector for "OK" button
-
+   
+    await page.click('#aboutSpeedScore .modal-footer .btn-theme'); 
     // Ensure the modal is hidden
-    await expect(aboutBox).toBeHidden(); // Verify that the About Box is hidden
+    await expect(aboutBox).toBeHidden(); 
   });
 
 });
