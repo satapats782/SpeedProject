@@ -17,6 +17,9 @@ const GlobalMenuBtn =  document.getElementById("menuBtn");
 const GlobalMenu = document.getElementById("sideMenu");
 const GlobalMenuIcon = document.getElementById("menuBtnIcon");
 const GlobalMenuItems = document.querySelectorAll("li[role='menuitem']");
+var GlobalAboutBox = new bootstrap.Modal(document.getElementById('aboutSpeedScore'));
+var GlobalAboutBoxCloseBtn = document.getElementsByClassName("close-about-btn");
+
 
 
 //Note: Per Josh Wulf's blog post, we implement all mutable global variables using
@@ -29,7 +32,9 @@ const GlobalFocusedMenuItem = (() => {
     }
     return Object.freeze(Store)
 })()
-
+/************************************/
+/* ABOUT BOX */
+/************************************/
 
 /************************************/
 /* MODE TAB VARIABLES               */

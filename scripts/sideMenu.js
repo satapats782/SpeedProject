@@ -38,12 +38,24 @@
  * This functionality is a placeholder; we will update later with more
  * specific functionality for each menu item.
  *************************************************************************/
-for (let i = 0; i < GlobalMenuItems.length; ++i) {
-    GlobalMenuItems[i].addEventListener("click",function(e) {
-      GlobalMenuBtn.click();
-    });
-}
+// for (let i = 0; i < GlobalMenuItems.length; ++i) {
+//     GlobalMenuItems[i].addEventListener("click",function(e) {
+//       GlobalMenuBtn.click();
+//     });
+// }
 
+
+
+GlobalMenuItems[1].addEventListener("click",function(e) {
+    GlobalAboutBox.show();
+    GlobalMenuBtn.click();
+    });
+
+    for (let i = 0; i < GlobalAboutBoxCloseBtn.length; ++i) {
+        GlobalAboutBoxCloseBtn[i].addEventListener("click",function(e) {
+        GlobalAboutBox.hide();
+        });
+        }
 
 /*************************************************************************
 * @function keyDownMenuBtnFocused
